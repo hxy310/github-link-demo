@@ -9,6 +9,11 @@ venv/
 env/
 ENV/
 
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
 # Test / coverage
 .pytest_cache/
 .coverage

@@ -1,0 +1,18 @@
+{
+  "tasks": [
+    {
+      "name": "lint",
+      "command": "ruff check ."
+    },
+    {
+      "name": "test",
+      "command": "pytest",
+      "deps": ["lint"]
+    },
+    {
+      "name": "build",
+      "command": "python -m build",
+      "deps": ["test"]
+    }
+  ]
+}

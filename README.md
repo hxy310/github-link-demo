@@ -1,68 +1,106 @@
-# GitHub 链接示例项目
+# 工作流引擎测试项目
 
-这是一个用于演示 **本地项目如何连接并推送到 GitHub** 的最小示例仓库。
+这是一个比普通 Hello World 更复杂的测试项目，用于演示如何把一个 **真实一点的 Python 项目** 与 **GitHub Actions** 结合起来。
 
-## 项目说明
+## 项目目标
 
-本项目包含一个简单的 Python 程序：
+本项目实现了一个轻量级的 **DAG 工作流执行计划引擎**，支持：
+- 从 JSON 读取任务定义
+- 校验任务结构
+- 根据依赖关系进行拓扑排序
+- 通过 CLI 输出任务执行顺序
 
-```python
-print("Hello, GitHub!")
-```
+它适合拿来测试：
+- 单元测试
+- 代码风格检查
+- 类型检查
+- 打包构建
+- 多工作流 GitHub Actions
 
-适合用于：
-- 测试 Git 与 GitHub 的连接是否正常
-- 验证 SSH 推送是否成功
-- 演示最基础的仓库初始化流程
-- 作为后续扩展项目的起点
-
-## 目录结构
+## 项目结构
 
 ```text
 .
 ├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   ├── pull_request_template.md
 │   └── workflows/
-│       └── ci.yml
-├── .gitignore
-├── LICENSE
-├── README.md
-└── main.py
+│       ├── ci.yml
+│       └── release-check.yml
+├── src/
+│   └── workflow_engine/
+│       ├── __init__.py
+│       ├── cli.py
+│       ├── engine.py
+│       ├── models.py
+│       └── parser.py
+├── tests/
+│   ├── test_engine.py
+│   └── test_parser.py
+├── workflow.example.json
+├── pyproject.toml
+├── main.py
+└── README.md
 ```
 
 ## 本地运行
 
-请确保已安装 Python 3，然后执行：
-
+### 1. 安装开发依赖
 ```bash
-python3 main.py
+python3 -m pip install -e .[dev]
 ```
 
-如果运行成功，你会看到：
+### 2. 生成示例工作流
+```bash
+python3 main.py init workflow.json
+```
 
+### 3. 输出执行计划
+```bash
+python3 main.py plan workflow.json
+```
+
+输出示例：
 ```text
-Hello, GitHub!
+1. lint: ruff check .
+2. test: pytest
+3. build: python -m build
+```
+
+## 本地质量检查
+
+### Ruff
+```bash
+ruff check .
+```
+
+### Mypy
+```bash
+mypy src
+```
+
+### Pytest
+```bash
+pytest
+```
+
+### Build
+```bash
+python -m build
 ```
 
 ## GitHub Actions
 
-本仓库已配置一个基础的 GitHub Actions 工作流，在以下场景自动执行：
-- push 到 `main` 分支
-- 提交 Pull Request 到 `main` 分支
-
-工作流会完成以下内容：
-1. 拉取代码
-2. 安装 Python
-3. 运行 `main.py`
+当前仓库将使用 GitHub Actions 完成：
+- Push / PR 自动运行 lint + type check + test
+- 构建源码包和 wheel
+- 上传构建产物
+- 单独提供 release-check 工作流
 
 ## 后续可扩展方向
 
-你可以在这个仓库基础上继续扩展，例如：
-- 增加 Python 包结构
-- 添加单元测试
-- 接入代码格式化检查
-- 配置自动发布流程
-- 增加 Issue / PR 模板
-
-## 许可证
-
-本项目采用 MIT License。
+- 支持 YAML 配置
+- 支持真正执行命令
+- 支持并行任务调度
+- 支持失败重试策略
+- 支持任务图可视化
