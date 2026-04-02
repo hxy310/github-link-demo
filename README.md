@@ -104,3 +104,30 @@ python -m build
 - 支持并行任务调度
 - 支持失败重试策略
 - 支持任务图可视化
+
+
+## 自动发布
+
+本仓库已配置 GitHub Actions 自动发布流程。
+
+### 触发方式
+当你推送形如以下格式的 Git 标签时：
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+GitHub Actions 会自动：
+1. 安装依赖
+2. 运行 Ruff / Mypy / Pytest
+3. 构建源码包和 wheel
+4. 生成 `SHA256SUMS.txt`
+5. 自动创建 GitHub Release
+6. 将 `dist/` 下的构建产物上传到 Release 附件
+
+### 发布建议
+发布前建议先更新：
+- `pyproject.toml` 中的版本号
+- `README.md`
+- 变更说明
