@@ -114,8 +114,8 @@ python -m build
 当你推送形如以下格式的 Git 标签时：
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.2.0
+git push origin v0.2.0
 ```
 
 GitHub Actions 会自动：
@@ -131,3 +131,19 @@ GitHub Actions 会自动：
 - `pyproject.toml` 中的版本号
 - `README.md`
 - 变更说明
+
+
+### Windows exe 自动发布
+
+当前 Release 工作流除了构建 Python 源码包和 wheel，还会在 `windows-latest` Runner 上：
+
+1. 安装依赖
+2. 运行 Ruff / Mypy / Pytest
+3. 使用 `PyInstaller` 构建单文件 exe
+4. 生成：
+   - `workflow-engine-cli.exe`
+   - `workflow-engine-cli-win-x64.zip`
+   - `SHA256SUMS-exe.txt`
+5. 将它们一并上传到 GitHub Release
+
+这样你后续发布时，不仅有 Python 包，还会有可直接下载的 Windows 可执行文件。

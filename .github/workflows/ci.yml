@@ -60,3 +60,27 @@ jobs:
         with:
           name: dist-artifacts
           path: dist/
+
+
+  windows-exe-smoke:
+    runs-on: windows-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安装依赖
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[dev]
+
+      - name: 构建 exe 冒烟测试
+        shell: pwsh
+        run: |
+          pyinstaller --onefile --name workflow-engine-cli main.py
+          if (!(Test-Path dist/workflow-engine-cli.exe)) { throw "exe not generated" }
